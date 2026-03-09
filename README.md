@@ -22,7 +22,7 @@
 ### Installation
 Install the core library via pip:
 ```bash
-pip install -e .
+pip install defakepy
 ```
 
 ### Basic Usage (CLI)

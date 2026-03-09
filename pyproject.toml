@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "defakepy"
-version = "0.1.0"
+version = "0.1.1"
 description = "A powerful open source library for detecting deepfakes and AI-generated content."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
-    { name = "Your Name", email = "you@example.com" }
+    { name = "Frontier Technologies Research Alliance", email = "ftralliance@gmail.com" }
 ]
 dependencies = [
     "torch>=2.0.0",
