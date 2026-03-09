@@ -1,14 +1,15 @@
-__version__ = "0.1.0"
+__version__ = "0.1.6"
 
 class ForensicScanner:
     """
-    Main entry point for Defakepy. 
-    Unified API for Text, Audio, and Video analysis.
+    Main entry point for Defakepy.
+    Unified API for Text, Audio, Video, and Image analysis.
     """
     def __init__(self):
         self._text_engine = None
         self._audio_engine = None
         self._vision_engine = None
+        self._image_engine = None
 
     @property
     def text_engine(self):
@@ -31,6 +32,13 @@ class ForensicScanner:
             self._vision_engine = VisionEngine()
         return self._vision_engine
 
+    @property
+    def image_engine(self):
+        if self._image_engine is None:
+            from .image_engine import ImageEngine
+            self._image_engine = ImageEngine()
+        return self._image_engine
+
     def scan_file(self, file_path):
         """
         Unified scan function that detects file type and runs appropriate engine.
@@ -46,13 +54,19 @@ class ForensicScanner:
             "results": {}
         }
 
+        # Handle Images
+        if ext in ['.jpg', '.jpeg', '.png', '.webp', '.bmp']:
+            report["type"] = "image"
+            res = self.image_engine.analyze(file_path)
+            report["results"]["image"] = res
+            if res.get("is_ai"):
+                report["trust_score"] -= res.get("confidence", 0)
+                report["flags"].append(f"Visual Anomaly: AI-Generated Image ({res.get('confidence', 0)}% confidence)")
+
         # Handle Text
-        if ext in ['.txt', '.pdf', '.docx']:
+        elif ext in ['.txt', '.pdf', '.docx']:
             report["type"] = "text"
-            # Basic text reading logic could go here
-            # For now, assumes raw text input if it's a string, 
-            # or would normally read the file.
-            pass 
+            pass
 
         # Handle Video
         elif ext in ['.mp4', '.mov', '.avi']:

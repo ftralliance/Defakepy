@@ -13,7 +13,13 @@ class AudioEngine:
         Analyzes an audio file for synthetic patterns.
         """
         # Lazy load librosa
-        import librosa
+        try:
+            import librosa
+        except ImportError:
+            raise ImportError(
+                "librosa or scipy is not installed. To use audio analysis, "
+                "install with: pip install 'defakepy[audio]'"
+            )
         
         try:
             # 1. Load the audio file

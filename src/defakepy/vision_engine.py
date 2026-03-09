@@ -13,7 +13,13 @@ class VisionEngine:
     def _load_models(self):
         """Lazy load dlib models."""
         if self._detector is None:
-            import dlib
+            try:
+                import dlib
+            except ImportError:
+                raise ImportError(
+                    "dlib is not installed. To use vision features, "
+                    "install with: pip install 'defakepy[vision]'"
+                )
             self._detector = dlib.get_frontal_face_detector()
             try:
                 self._predictor = dlib.shape_predictor(self.predictor_path)
@@ -33,7 +39,13 @@ class VisionEngine:
 
     def analyze_video(self, video_path):
         """Tracks blinking across video frames."""
-        import cv2
+        try:
+            import cv2
+        except ImportError:
+            raise ImportError(
+                "opencv-python (cv2) is not installed. To use vision features, "
+                "install with: pip install 'defakepy[vision]'"
+            )
         self._load_models()
         if self._predictor is None:
             return {"error": "Dlib predictor not loaded. Please provide shape_predictor_68_face_landmarks.dat"}

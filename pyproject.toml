@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "defakepy"
-version = "0.1.1"
+version = "0.1.6"
 description = "A powerful open source library for detecting deepfakes and AI-generated content."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -12,14 +12,7 @@ authors = [
     { name = "Frontier Technologies Research Alliance", email = "ftralliance@gmail.com" }
 ]
 dependencies = [
-    "torch>=2.0.0",
-    "transformers>=4.30.0",
-    "librosa>=0.10.0",
-    "opencv-python>=4.8.0",
-    "dlib>=19.24.0",
-    "c2pa-python>=0.28.0",
-    "numpy>=1.24.0",
-    "scipy>=1.11.0"
+    "numpy>=1.24.0"
 ]
 
 [project.optional-dependencies]
@@ -27,6 +20,29 @@ dev = [
     "pytest>=7.0.0",
     "black>=23.0.0",
     "isort>=5.12.0"
+]
+text = [
+    "torch>=2.0.0",
+    "transformers>=4.30.0"
+]
+audio = [
+    "librosa>=0.11.0",
+    "scipy>=1.11.0"
+]
+vision = [
+    "opencv-python>=4.8.0",
+    "dlib>=19.24.0"
+]
+image = [
+    "torch>=2.0.0",
+    "transformers>=4.30.0",
+    "Pillow>=9.0.0"
+]
+provenance = [
+    "c2pa-python>=0.28.0"
+]
+full = [
+    "defakepy[text,audio,vision,image,provenance]"
 ]
 
 [project.scripts]
