@@ -4,6 +4,98 @@ First off, thank you for contributing to Defakepy! Your work helps keep the inte
 
 ---
 
+## 🚦 Your First Contribution — Start Here
+
+Follow these steps exactly if you are contributing for the first time. This will take you from zero to having your first PR ready.
+
+### Step 1 — Fork the Repository
+Go to [github.com/ftralliance/Defakepy](https://github.com/ftralliance/Defakepy) and click **Fork** (top right). This creates your own copy of the project.
+
+### Step 2 — Clone Your Fork
+```bash
+git clone https://github.com/YOUR-GITHUB-USERNAME/Defakepy.git
+cd Defakepy
+```
+
+### Step 3 — Set Up the Upstream Remote
+This links your local copy to the original repository so you can pull future updates:
+```bash
+git remote add upstream https://github.com/ftralliance/Defakepy.git
+git fetch upstream
+```
+
+### Step 4 — Create a Virtual Environment
+```bash
+python -m venv .venv
+
+# Activate it:
+# Windows:
+.venv\Scripts\activate
+# macOS / Linux:
+source .venv/bin/activate
+```
+
+### Step 5 — Install the Package in Editable Mode
+```bash
+pip install -e ".[full,dev]"
+```
+The `-e` flag means any code change you make is instantly reflected. The `dev` extra installs `pytest`, `black`, and `isort`.
+
+> ⚠️ **Windows Note**: If `torch` fails with `WinError 1114`, install the Visual C++ Redistributable from [https://aka.ms/vs/17/release/vc_redist.x64.exe](https://aka.ms/vs/17/release/vc_redist.x64.exe), then restart and try again.
+
+### Step 6 — Create Your Feature Branch
+**Never commit directly to `main`.** Always create a branch:
+```bash
+git checkout -b feature/short-description-of-your-change
+```
+Good branch name examples:
+- `feature/pdf-text-scan`
+- `fix/blink-threshold-windows`
+- `docs/improve-audio-engine-docstring`
+
+### Step 7 — Make Your Changes
+- Edit source files in `src/defakepy/`
+- Follow the **Coding Conventions** below (lazy imports, graceful degradation, return dicts)
+- Add or update tests in `tests/test_core.py`
+
+### Step 8 — Format and Lint
+```bash
+black src/
+isort src/
+```
+
+### Step 9 — Run Tests
+```bash
+pytest
+```
+All tests must pass before opening a PR.
+
+### Step 10 — Commit Your Changes
+Write a clear commit message:
+```bash
+git add -A
+git commit -m "feat: add PDF scanning support to TextEngine"
+```
+Use these prefixes:
+- `feat:` — new feature
+- `fix:` — bug fix
+- `docs:` — documentation only
+- `refactor:` — code improvement without new features
+
+### Step 11 — Push Your Branch
+```bash
+git push origin feature/your-branch-name
+```
+
+### Step 12 — Open a Pull Request
+Go to **your fork** on GitHub and click **"Compare & pull request"**. In the PR description, include:
+- **What** you changed
+- **Why** — what problem does it solve?
+- **How to test** — what should the reviewer run?
+- Screenshot or output if relevant
+
+---
+
 ## 📐 Project Architecture
 
 Understanding the project structure is the first step.
