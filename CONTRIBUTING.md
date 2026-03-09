@@ -12,10 +12,11 @@ Understanding the project structure is the first step.
 Defakepy/
 ├── src/
 │   └── defakepy/
-│       ├── __init__.py        # ForensicScanner: the main unified API
-│       ├── text_engine.py     # TextEngine: Perplexity & Burstiness analysis
+│       ├── __init__.py        # ForensicScanner: the main unified API & scan_file() router
+│       ├── text_engine.py     # TextEngine: RoBERTa AI text classifier
 │       ├── audio_engine.py    # AudioEngine: Spectral/MFCC analysis
 │       ├── vision_engine.py   # VisionEngine: Eye Aspect Ratio (blink detection)
+│       ├── image_engine.py    # ImageEngine: ViT AI image classifier
 │       └── cli.py             # CLI entry point (defakepy-scan command)
 ├── tests/
 │   └── test_core.py           # Core test suite
@@ -28,12 +29,19 @@ Defakepy/
 
 ### How the Engines Work
 
-| Engine | File | Core Technique | Dependencies |
+| Engine | File | Core Technique | Extra Required |
 |---|---|---|---|
-| `TextEngine` | `text_engine.py` | GPT-2 Perplexity + Sentence Burstiness | `defakepy[text]` |
+| `TextEngine` | `text_engine.py` | RoBERTa binary classifier (`chatgpt-detector-roberta`) | `defakepy[text]` |
+| `ImageEngine` | `image_engine.py` | ViT binary classifier (`AI-image-detector`) | `defakepy[image]` |
 | `AudioEngine` | `audio_engine.py` | Spectral Centroid Variance + MFCC | `defakepy[audio]` |
 | `VisionEngine` | `vision_engine.py` | Eye Aspect Ratio (EAR) Blink Tracking | `defakepy[vision]` |
-| `ForensicScanner` | `__init__.py` | Orchestrates the engines, adds C2PA check | `defakepy[provenance]` |
+| `ForensicScanner` | `__init__.py` | Routes files to engines + adds C2PA check | `defakepy[provenance]` |
+
+> **Important — how `scan_file()` routes files:**
+> - `.txt / .pdf / .docx` → `TextEngine`
+> - `.jpg / .jpeg / .png / .webp / .bmp` → `ImageEngine`
+> - `.mp4 / .mov / .avi` → `VisionEngine` + `AudioEngine`
+> - `.wav / .mp3 / .m4a` → `AudioEngine`
 
 All engines use **lazy loading** — heavy models are only imported when the engine is first used. They also use **graceful degradation** — if an optional dependency is missing, a helpful `ImportError` is raised with the exact install command.
 
@@ -79,17 +87,22 @@ pytest
 - Include your OS, Python version, and a minimal example that reproduces the error.
 
 ### Suggesting a New Detection Method (Most Valuable!)
-We are always looking for new "tells" — verifiable signals that distinguish AI content from human content. Great candidates include:
+We are always looking for new "tells" — verifiable signals that distinguish AI content from human content. Here's the current state and best opportunities to contribute:
 
-- **Video**: Skin texture smoothness, lip-sync analysis (SyncNet), unnatural eye reflections.
-- **Audio**: Breathing pattern analysis, pop/click detection.
-- **Text**: Punctuation entropy, capitalization patterns.
-- **Image**: GAN upsampling artifacts, Fourier-domain analysis.
+| Area | Status | Best Opportunities |
+|---|---|---|
+| **Text** | ✅ RoBERTa classifier | Improve with ensemble models; add multilingual support |
+| **Image** | ✅ ViT classifier | Add Fourier-domain artifact analysis; test against SDXL/Flux models |
+| **Audio** | ✅ MFCC spectral analysis | Add breathing pattern detection, Mel spectrogram visualization |
+| **Video (Face)** | ✅ EAR blink tracking | Add lip-sync analysis (SyncNet), facial texture consistency |
+| **Video (Scene)** | ❌ Not implemented | Scene-level AI detection (AI backgrounds, lighting inconsistency) |
+| **Documents** | ❌ Not implemented | Read & scan text from `.pdf` and `.docx` files, not just `.txt` |
+| **Metadata** | ✅ C2PA check (basic) | Improve to fully parse C2PA manifests |
 
-Open an [Issue](https://github.com/ftralliance/Defakepy/issues) with the tag `enhancement` and describe the signal you want to detect and your proposed approach.
+Open an [Issue](https://github.com/ftralliance/Defakepy/issues) with the tag `enhancement` and describe the signal and your proposed approach.
 
 ### Improving Detection Thresholds
-The heuristic thresholds in each engine (`EAR_THRESHOLD`, `is_synthetic`, `is_ai`) are experimental. If you run Defakepy on a labeled dataset and find better thresholds, please open a PR!
+The confidence thresholds in each engine (`is_synthetic`, `is_ai`, `EAR_THRESHOLD`) are experimental. If you run Defakepy against a labeled benchmark dataset and find better values, please open a PR with your methodology!
 
 ### Submitting a Pull Request (PR)
 1. **Create a branch** from `main`:
